@@ -1,12 +1,15 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { CartContext } from '../../contexts/CartContext';
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { CartContext } from "../../contexts/CartContext";
 
 function HeaderNav() {
   const { cartItems } = useContext(CartContext);
 
   return (
-    <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#1F51FF' }}>
+    <nav
+      className="navbar navbar-expand-lg"
+      style={{ backgroundColor: "#1F51FF" }}
+    >
       <div className="container-fluid">
         <button
           className="navbar-toggler"
@@ -45,7 +48,10 @@ function HeaderNav() {
               </a>
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
-                  <Link className="dropdown-item" to="/dashboard?category=Laptop">
+                  <Link
+                    className="dropdown-item"
+                    to="/dashboard?category=Laptop"
+                  >
                     LAPTOP
                   </Link>
                 </li>
@@ -55,17 +61,26 @@ function HeaderNav() {
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/dashboard?category=Printer">
+                  <Link
+                    className="dropdown-item"
+                    to="/dashboard?category=Printer"
+                  >
                     PRINTER
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/dashboard?category=MacBook">
+                  <Link
+                    className="dropdown-item"
+                    to="/dashboard?category=MacBook"
+                  >
                     MacBooks
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/dashboard?category=Projector">
+                  <Link
+                    className="dropdown-item"
+                    to="/dashboard?category=Projector"
+                  >
                     PROJECTOR
                   </Link>
                 </li>
@@ -86,12 +101,14 @@ function HeaderNav() {
             <Link className="btn btn-outline-primary" to="/login">
               <i className="bi bi-person"></i>
             </Link>
-            <Link className="btn btn-outline-primary position-relative" to="/cart">
+            <Link
+              className="btn btn-outline-primary position-relative"
+              to="/cart"
+            >
               <i className="bi bi-cart"></i>
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill">
-                {cartItems.length}
-              </span>
+              <span className="cart-badge">{cartItems.length}</span>
             </Link>
+
             <Link className="btn btn-primary" to="#">
               Call Us
             </Link>
