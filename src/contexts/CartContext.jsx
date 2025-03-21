@@ -32,10 +32,10 @@ export const CartProvider = ({ children }) => {
 
   // The cart count is just the length of cartItems
   const updateCartCount = () => cartItems.length;
-
+  
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateCartCount }}
+      value={{ cartItems, setCartItems, addToCart, removeFromCart, updateCartCount }}
     >
       {children}
     </CartContext.Provider>

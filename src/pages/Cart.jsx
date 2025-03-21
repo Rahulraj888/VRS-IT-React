@@ -1,5 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { CartContext } from '../contexts/CartContext';
+import CartItem from '../components/cart/CartItem';
+import CartTotals from '../components/cart/CartTotals';
+import UploadModal from '../components/cart/UploadModal';
 import '../styles/Cart.module.css';
 
 function Cart() {
@@ -15,6 +18,7 @@ function Cart() {
 
   // Handler for deleting an item.
   const handleDelete = (index) => {
+    console.log("Deleting item at index:", index);
     const newCart = [...cartItems];
     newCart.splice(index, 1);
     setCartItems(newCart);
@@ -62,7 +66,7 @@ function Cart() {
                   <th scope="col">Subtotal</th>
                 </tr>
               </thead>
-              <tbody id="cart-items">
+              <tbody>
                 {cartItems.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="text-center">
@@ -70,41 +74,16 @@ function Cart() {
                     </td>
                   </tr>
                 ) : (
-                  cartItems.map((product, index) => {
-                    const productSubtotal = product.price * product.quantity;
-                    return (
-                      <tr key={index}>
-                        <td>
-                          <button
-                            className="btn btn-danger btn-sm delete-btn"
-                            onClick={() => handleDelete(index)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                        <td>
-                          <img src={product.image} alt={product.name} className="cart-img" />
-                        </td>
-                        <td>{product.name}</td>
-                        <td>
-                          <button
-                            className="btn btn-secondary btn-sm decrease-quantity"
-                            onClick={() => handleDecrease(index)}
-                          >
-                            -
-                          </button>
-                          <span className="quantity mx-2">{product.quantity}</span>
-                          <button
-                            className="btn btn-secondary btn-sm increase-quantity"
-                            onClick={() => handleIncrease(index)}
-                          >
-                            +
-                          </button>
-                        </td>
-                        <td>₹{productSubtotal.toFixed(2)}</td>
-                      </tr>
-                    );
-                  })
+                  cartItems.map((product, index) => (
+                    <CartItem
+                      key={index}
+                      product={product}
+                      index={index}
+                      onDelete={handleDelete}
+                      onIncrease={handleIncrease}
+                      onDecrease={handleDecrease}
+                    />
+                  ))
                 )}
               </tbody>
             </table>
@@ -113,71 +92,22 @@ function Cart() {
 
         {/* Cart Totals Section */}
         <div className="col-md-5">
-          <div className="border-effect">
-            <h3>Cart Totals</h3>
-            <ul className="list-group mb-3">
-              <li className="list-group-item d-flex justify-content-between">
-                <span>Subtotal</span>
-                <strong id="subtotal">₹{subtotal.toFixed(2)}</strong>
-              </li>
-              <li className="list-group-item d-flex justify-content-between">
-                <span>Deposit Fee</span>
-                <strong id="deposit-fee">₹{depositFee.toFixed(2)}</strong>
-              </li>
-              <li className="list-group-item d-flex justify-content-between">
-                <span>GST (10%)</span>
-                <strong id="gst">₹{gst.toFixed(2)}</strong>
-              </li>
-              <li className="list-group-item d-flex justify-content-between">
-                <span>Total</span>
-                <strong id="total">₹{total.toFixed(2)}</strong>
-              </li>
-            </ul>
-            <button id="modify" className="btn btn-block mb-3">
-              Proceed to Checkout
-            </button>
-            <div className="alert alert-info" role="alert">
-              Before proceeding to checkout, please provide the required documents.
-            </div>
-            <button
-              className="btn btn-secondary btn-block"
-              id="uploadButton"
-              onClick={() => setShowUploadModal(true)}
-            >
-              Upload Documents
-            </button>
-          </div>
+          <CartTotals
+            subtotal={subtotal}
+            depositFee={depositFee}
+            gst={gst}
+            total={total}
+            onUploadClick={() => setShowUploadModal(true)}
+          />
         </div>
       </div>
 
       {/* Modal for Document Upload */}
       {showUploadModal && (
-        <div className="modal show fade" style={{ display: 'block' }} tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="uploadModalLabel">
-                  Upload Documents
-                </h5>
-                <button type="button" className="btn-close" onClick={() => setShowUploadModal(false)}></button>
-              </div>
-              <div className="modal-body">
-                <form id="documentUploadForm" onSubmit={handleUploadSubmit} encType="multipart/form-data">
-                  <div className="mb-3">
-                    <label htmlFor="document" className="form-label">
-                      Choose File
-                    </label>
-                    <input type="file" className="form-control" id="document" name="document" required />
-                  </div>
-                  <button type="submit" className="btn btn-primary">
-                    Upload
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-          <div className="modal-backdrop fade show"></div>
-        </div>
+        <UploadModal
+          onClose={() => setShowUploadModal(false)}
+          onSubmit={handleUploadSubmit}
+        />
       )}
     </div>
   );
