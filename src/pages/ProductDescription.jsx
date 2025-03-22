@@ -29,7 +29,6 @@ function ProductDescription() {
     fetch('http://localhost:5000/api/products')
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         setProducts(data);
         const prod = data.find(p => p.name === productId);
         if (prod) {
