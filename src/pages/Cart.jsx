@@ -1,14 +1,15 @@
-import React, { useContext, useState } from 'react';
+// src/pages/Cart.jsx
+import React, { useContext } from 'react';
 import { CartContext } from '../contexts/CartContext';
 import CartItem from '../components/cart/CartItem';
 import CartTotals from '../components/cart/CartTotals';
-import UploadModal from '../components/cart/UploadModal';
 import '../styles/Cart.module.css';
+import { useNavigate } from 'react-router-dom';
 
 function Cart() {
   // Get cart items and updater from context.
   const { cartItems, setCartItems } = useContext(CartContext);
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  const navigate = useNavigate();
 
   // Compute totals.
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -42,12 +43,16 @@ function Cart() {
     setCartItems(newCart);
   };
 
-  // Handler for document upload submission.
-  const handleUploadSubmit = (e) => {
-    e.preventDefault();
-    alert("Documents uploaded successfully!");
-    setShowUploadModal(false);
+  const handlePlaceOrder = () => {
+    const loggedInUser = localStorage.getItem("userEmail");
+    if (!loggedInUser) {
+      navigate("/login");
+    } else {
+      alert("Order placed successfully!");
+      setCartItems([]); 
+    }
   };
+  
 
   return (
     <div className="container mt-5">
@@ -97,18 +102,10 @@ function Cart() {
             depositFee={depositFee}
             gst={gst}
             total={total}
-            onUploadClick={() => setShowUploadModal(true)}
+            onPlaceOrder={handlePlaceOrder}
           />
         </div>
       </div>
-
-      {/* Modal for Document Upload */}
-      {showUploadModal && (
-        <UploadModal
-          onClose={() => setShowUploadModal(false)}
-          onSubmit={handleUploadSubmit}
-        />
-      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
+// src/components/cart/CartTotals.jsx
 import React from 'react';
 
-function CartTotals({ subtotal, depositFee, gst, total, onUploadClick }) {
+function CartTotals({ subtotal, depositFee, gst, total, onPlaceOrder }) {
   return (
     <div className="border-effect">
       <h3>Cart Totals</h3>
@@ -22,12 +23,8 @@ function CartTotals({ subtotal, depositFee, gst, total, onUploadClick }) {
           <strong>₹{total.toFixed(2)}</strong>
         </li>
       </ul>
-      <button className="btn btn-block mb-3">Proceed to Checkout</button>
-      <div className="alert alert-info" role="alert">
-        Before proceeding to checkout, please provide the required documents.
-      </div>
-      <button className="btn btn-secondary btn-block" onClick={onUploadClick}>
-        Upload Documents
+      <button className="btn btn-primary w-100" onClick={onPlaceOrder}>
+        Place Order
       </button>
     </div>
   );
