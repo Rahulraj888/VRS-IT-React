@@ -1,4 +1,4 @@
-// src/components/ToastNotification.jsx
+// src/components/login/ToastNotification.jsx
 import React from 'react';
 
 export default function ToastNotification({ visible, onClose }) {

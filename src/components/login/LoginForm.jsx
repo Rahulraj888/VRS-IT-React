@@ -1,33 +1,46 @@
-// src/components/LoginForm.jsx
+// src/components/login/LoginForm.jsx
 import React from 'react';
 
-export default function LoginForm({ onSubmit }) {
+export default function LoginForm({
+  onSubmit,
+  loginEmail,
+  setLoginEmail,
+  loginPassword,
+  setLoginPassword,
+  loginError,
+}) {
   return (
     <form className="mt-4" onSubmit={onSubmit}>
       <div className="form-group mb-3">
         <label htmlFor="loginEmail">
-          Username or email address <span className="text-danger">*</span>
+          Email address <span className="text-danger">*</span>
         </label>
-        <input type="email" className="form-control" id="loginEmail" required />
+        <input
+          type="email"
+          className="form-control"
+          id="loginEmail"
+          value={loginEmail}
+          onChange={(e) => setLoginEmail(e.target.value)}
+          required
+        />
       </div>
       <div className="form-group mb-3">
         <label htmlFor="loginPassword">
           Password <span className="text-danger">*</span>
         </label>
-        <input type="password" className="form-control" id="loginPassword" required />
+        <input
+          type="password"
+          className="form-control"
+          id="loginPassword"
+          value={loginPassword}
+          onChange={(e) => setLoginPassword(e.target.value)}
+          required
+        />
       </div>
-      <div className="form-group form-check mb-3">
-        <input type="checkbox" className="form-check-input" id="rememberMe" />
-        <label className="form-check-label" htmlFor="rememberMe">
-          Remember me
-        </label>
-      </div>
+      {loginError && <div className="alert alert-danger">{loginError}</div>}
       <button type="submit" className="btn btn-primary w-100">
         Log in
       </button>
-      <a href="#" className="d-block mt-2">
-        Lost your password?
-      </a>
     </form>
   );
 }
