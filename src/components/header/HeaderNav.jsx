@@ -1,9 +1,31 @@
+// HeaderNav.jsx
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../../contexts/CartContext";
+import jwt_decode from "jwt-decode"; // Default import from jwt-decode@3.1.2
 
 function HeaderNav() {
   const { cartItems } = useContext(CartContext);
+  const navigate = useNavigate();
+
+  // Get the JWT token from localStorage
+  const token = localStorage.getItem("token");
+
+  let userEmail = null;
+  if (token) {
+    try {
+      // Decode the token and extract the email field
+      const decoded = jwt_decode(token);
+      userEmail = decoded.email; // Ensure your backend includes an email field in the token payload
+    } catch (err) {
+      console.error("Invalid token:", err);
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <nav
@@ -98,9 +120,23 @@ function HeaderNav() {
             </li>
           </ul>
           <div className="d-flex align-items-center header-icons">
-            <Link className="btn btn-outline-primary" to="/login">
-              <i className="bi bi-person"></i>
-            </Link>
+            {token ? (
+              <>
+                <Link className="btn btn-outline-primary me-2" to="/profile">
+                  <i className="bi bi-person"></i>
+                </Link>
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={handleLogout}
+                >
+                 Logout <i className="bi bi-box-arrow-right"></i>
+                </button>
+              </>
+            ) : (
+              <Link className="btn btn-outline-primary" to="/login">
+                <i className="bi bi-person"></i>
+              </Link>
+            )}
             <Link
               className="btn btn-outline-primary position-relative"
               to="/cart"
@@ -108,7 +144,6 @@ function HeaderNav() {
               <i className="bi bi-cart"></i>
               <span className="cart-badge">{cartItems.length}</span>
             </Link>
-
             <Link className="btn btn-primary" to="#">
               Call Us
             </Link>

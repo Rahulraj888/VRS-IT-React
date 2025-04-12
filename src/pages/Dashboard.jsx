@@ -1,3 +1,4 @@
+// Dashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import '../styles/Dashboard.Module.css';

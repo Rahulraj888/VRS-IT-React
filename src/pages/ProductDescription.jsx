@@ -72,6 +72,7 @@ function ProductDescription() {
   const handleAddToCart = () => {
     if (!product) return;
     const cartProduct = {
+      _id: product._id, // Include product id for later reference in orders
       name: product.name,
       image: product.image,
       quantity: parseInt(quantity, 10),
@@ -94,7 +95,6 @@ function ProductDescription() {
   return (
     <div>
       <ProductHeader product={product} />
-
       <ProductMainSection
         mainImage={mainImage}
         product={product}
@@ -105,14 +105,11 @@ function ProductDescription() {
         onPeriodChange={handlePeriodChange}
         onAddToCart={handleAddToCart}
       />
-
       <ThumbnailList
         thumbnails={[product.image, product.background]}
         onThumbnailClick={handleChangeImage}
       />
-
       <hr />
-
       <div className="my-5">
         <h2>Related products</h2>
       </div>
