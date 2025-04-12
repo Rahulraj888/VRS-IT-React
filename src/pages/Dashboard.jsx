@@ -1,15 +1,12 @@
 // Dashboard.jsx
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import '../styles/Dashboard.Module.css';
-import FilterPanel from '../components/dashboard/FilterPanel';
-import ProductList from '../components/dashboard/ProductList';
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import "../styles/Dashboard.Module.css";
+import FilterPanel from "../components/dashboard/FilterPanel";
+import ProductList from "../components/dashboard/ProductList";
 
 function Dashboard() {
-  // Products loaded from JSON
   const [products, setProducts] = useState([]);
-
-  // Filter state: categories, brands, processors, and maxPrice.
   const [filters, setFilters] = useState({
     selectedCategories: [],
     selectedBrands: [],
@@ -17,25 +14,22 @@ function Dashboard() {
     maxPrice: 23999,
   });
 
-  // React Router search params (for query parameters)
   const [searchParams] = useSearchParams();
 
-  // Load products from JSON once on mount
+  // Fetch products from your backend
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch("http://localhost:5000/api/products")
       .then((response) => response.json())
-      .then((data) => {
-        setProducts(data);
-      })
-      .catch((error) => console.error('Error loading products:', error));
+      .then((data) => setProducts(data))
+      .catch((error) => console.error("Error loading products:", error));
   }, []);
 
-  // On mount, read query params and update filters
+  // Update filters based on query parameters
   useEffect(() => {
-    const queryCategory = searchParams.get('category') || '';
-    const queryBrand = searchParams.get('brand') || '';
-    const queryProcessor = searchParams.get('processor') || '';
-    const queryMaxPrice = searchParams.get('maxPrice') || '23999';
+    const queryCategory = searchParams.get("category") || "";
+    const queryBrand = searchParams.get("brand") || "";
+    const queryProcessor = searchParams.get("processor") || "";
+    const queryMaxPrice = searchParams.get("maxPrice") || "23999";
 
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -46,7 +40,7 @@ function Dashboard() {
     }));
   }, [searchParams]);
 
-  // Compute filtered products based on filters state
+  // Filter logic
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
       filters.selectedCategories.length === 0 ||
@@ -61,21 +55,17 @@ function Dashboard() {
     return matchesCategory && matchesBrand && matchesProcessor && matchesPrice;
   });
 
-  // Handle change for checkboxes (categories, brands, processors)
+  // Handlers for FilterPanel
   const handleCheckboxChange = (filterKey, value, checked) => {
     setFilters((prevFilters) => {
       const currentArray = prevFilters[filterKey];
-      let newArray;
-      if (checked) {
-        newArray = [...currentArray, value];
-      } else {
-        newArray = currentArray.filter((item) => item !== value);
-      }
+      const newArray = checked
+        ? [...currentArray, value]
+        : currentArray.filter((item) => item !== value);
       return { ...prevFilters, [filterKey]: newArray };
     });
   };
 
-  // Handle change for the price range input
   const handlePriceChange = (e) => {
     const newPrice = parseInt(e.target.value, 10);
     setFilters((prevFilters) => ({
@@ -87,15 +77,15 @@ function Dashboard() {
   return (
     <div className="container mt-5">
       <div className="row">
+        {/* Left Filter Panel */}
         <FilterPanel
           filters={filters}
           onPriceChange={handlePriceChange}
           onCheckboxChange={handleCheckboxChange}
         />
         <div className="col-md-9">
-          <div className="row" id="product-list">
-            <ProductList products={filteredProducts} />
-          </div>
+          {/* ProductList is responsible for arranging items */}
+          <ProductList products={filteredProducts} />
         </div>
       </div>
     </div>
