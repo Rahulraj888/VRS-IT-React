@@ -1,38 +1,37 @@
 // src/pages/Cart.jsx
-import React, { useContext } from 'react';
-import { CartContext } from '../contexts/CartContext';
-import CartItem from '../components/cart/CartItem';
-import CartTotals from '../components/cart/CartTotals';
-import '../styles/Cart.module.css';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext } from "react";
+import { CartContext } from "../contexts/CartContext";
+import CartItem from "../components/cart/CartItem";
+import CartTotals from "../components/cart/CartTotals";
+import "../styles/Cart.module.css";
+import { useNavigate } from "react-router-dom";
 
 function Cart() {
-  // Get cart items and updater from context.
   const { cartItems, setCartItems } = useContext(CartContext);
   const navigate = useNavigate();
 
   // Compute totals.
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
   const depositFee = 10;
-  const gst = subtotal * 0.10;
+  const gst = subtotal * 0.1;
   const total = subtotal + depositFee + gst;
 
-  // Handler for deleting an item.
+  // Handlers for cart item manipulation...
   const handleDelete = (index) => {
-    console.log("Deleting item at index:", index);
     const newCart = [...cartItems];
     newCart.splice(index, 1);
     setCartItems(newCart);
   };
 
-  // Handler for increasing quantity.
   const handleIncrease = (index) => {
     const newCart = [...cartItems];
     newCart[index].quantity += 1;
     setCartItems(newCart);
   };
 
-  // Handler for decreasing quantity.
   const handleDecrease = (index) => {
     const newCart = [...cartItems];
     if (newCart[index].quantity > 1) {
@@ -43,16 +42,49 @@ function Cart() {
     setCartItems(newCart);
   };
 
-  const handlePlaceOrder = () => {
-    const loggedInUser = localStorage.getItem("userEmail");
-    if (!loggedInUser) {
+  // Handler for placing the order with JWT integration
+  const handlePlaceOrder = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
       navigate("/login");
-    } else {
-      alert("Order placed successfully!");
-      setCartItems([]); 
+      return;
+    }
+
+    // Prepare order data with proper product reference
+    const orderData = {
+      items: cartItems.map((item) => ({
+        product: item._id, // Use the _id passed from ProductDescription.jsx
+        image: item.image,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+      totalPrice: total,
+    };
+
+    try {
+      const response = await fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        await response.json();
+        setCartItems([]); // Clear cart on success
+        alert("Order placed successfully!");
+      } else {
+        const errorData = await response.json();
+        alert("Error placing order: " + errorData.error);
+      }
+    } catch (error) {
+      console.error("Error in order placement:", error);
+      alert("An error occurred while placing your order.");
     }
   };
-  
 
   return (
     <div className="container mt-5">
@@ -94,7 +126,6 @@ function Cart() {
             </table>
           </div>
         </div>
-
         {/* Cart Totals Section */}
         <div className="col-md-5">
           <CartTotals
